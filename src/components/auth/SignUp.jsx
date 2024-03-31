@@ -3,22 +3,26 @@ import React, { useState } from "react";
 import { auth } from "../../firebase";
 import CustomToast from "../Toast";
 import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from "react-redux";
+import { setProducts, setUsers } from "../../store";
 
 const SignUp = () => {
   const isSignUp = window.location.pathname == "/signUp"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
 
   const signUpORLogin = (e) => {
     e.preventDefault();
     
-    if(isSignUp) {
+    if(isSignUp) { 
         createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             toast.success('Successfully sign up!!', {
                 position: "top-center",
                 autoClose: 5000,
             });
+            dispatch(setProducts(userCredential?.user))
             console.log(userCredential);
         })
         .catch((error) => {
@@ -36,6 +40,7 @@ const SignUp = () => {
                 position: "top-center",
                 autoClose: 5000,
             });
+            dispatch(setUsers(userCredential?.user))
             console.log(userCredential);
         })
         .catch((error) => {

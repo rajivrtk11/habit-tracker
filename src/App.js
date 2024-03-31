@@ -8,6 +8,7 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./index.css"
+import GoalComponent from './components/GoalComponent';
 
 function App() {
   
@@ -29,6 +30,7 @@ function App() {
           position="top-center"
           autoClose={5000}
         />
+        <GoalComponent />
       </div>
     </Router>
   );
