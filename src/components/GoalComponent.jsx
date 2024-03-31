@@ -20,10 +20,22 @@ const GoalComponent = () => {
         key: 'selection',
     });
     const [show, setShow] = useState(false);
+    const [goalInput, setGoalInput] = useState({
+      userId: "",
+      description: "",
+      startDate: new Date(),
+      endDate: new Date() ,
+      taskArr: [
+        
+      ] 
+    })
 
     const handleDateSelect = (ranges) => {
-        // Update the selected date range in state
-        
+        setGoalInput(prev => ({
+            ...prev,
+            startDate: ranges.selection.startDate,
+            endDate: ranges.selection.endDate,
+        })) 
         setSelectedRange(ranges.selection);
     }
 
@@ -36,24 +48,19 @@ const GoalComponent = () => {
             ...doc.data(),
             id: doc.id,
           }));
-          console.log('the data is', filteredData);
         } catch (err) {
           console.error(err);
         }
       };
+
     const handleSubmit = async(event) => {
         event.preventDefault(); // Prevent default form submission behavior
         console.log('inside submit', auth);
-        let newMovieTitle = 'movie';
-        let newReleaseDate = "date";
-        let isNewMovieOscar = true;
+    
         debugger
         try {
             const res = await addDoc(goalsCollectionRef, {
-              title: newMovieTitle,
-              releaseDate: newReleaseDate,
-              receivedAnOscar: isNewMovieOscar,
-              userId: auth?.currentUser?.uid,
+              ...goalInput
             });
             console.log('the res', res);
           } catch (err) {
@@ -61,18 +68,23 @@ const GoalComponent = () => {
           }
     }
     
+    const handleChange = (e) => {
+        setGoalInput(e?.target?.name, e?.target?.value);
+    }
+
     useEffect(() => {
         getMovieList()
     }, [])
+
     return (
         <>
         <form onSubmit={handleSubmit}>
             <div className="row g-3 align-items-center mb-2">
                 <div className="col-auto">
-                    <label htmlFor="inputPassword6" className="col-form-label">Description</label>
+                    <label htmlFor="description" className="col-form-label">Description</label>
                 </div>
                 <div className="col-4">
-                    <input type="text" id="Description" className="form-control" aria-describedby="passwordHelpInline" />
+                    <input type="text" onChange={handleChange} name='description' id="description" className="form-control" aria-describedby="passwordHelpInline" />
                 </div>
             </div>
             <div className="row g-3 align-items-center ">
@@ -94,7 +106,7 @@ const GoalComponent = () => {
         </form>
         <button className="btn btn-primary" onClick={() => setShow(true)}>Add Task</button>
         {
-            show && <Task show={show} setShow={setShow}/>
+            show && <Task show={show} setShow={setShow} setGoalInput={setGoalInput}/>
             
         }
         </>
