@@ -5,12 +5,14 @@ import CustomToast from "../Toast";
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from "react-redux";
 import { setProducts, setUsers } from "../../store";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const isSignUp = window.location.pathname == "/signUp"
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const signUpORLogin = (e) => {
     e.preventDefault();
@@ -22,7 +24,8 @@ const SignUp = () => {
                 position: "top-center",
                 autoClose: 5000,
             });
-            dispatch(setProducts(userCredential?.user))
+            dispatch(setProducts(userCredential?.user));
+            navigate("/");
             console.log(userCredential);
         })
         .catch((error) => {
@@ -40,7 +43,8 @@ const SignUp = () => {
                 position: "top-center",
                 autoClose: 5000,
             });
-            dispatch(setUsers(userCredential?.user))
+            dispatch(setUsers(userCredential?.user));
+            navigate("/");
             console.log(userCredential);
         })
         .catch((error) => {
