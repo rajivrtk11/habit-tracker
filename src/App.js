@@ -25,12 +25,15 @@ function App() {
             path="/login"
             element={<SignUp />}
           ></Route>
+          <Route
+            path="/addGoal"
+            element={<GoalComponent />}
+          ></Route>
         </Routes>
         <ToastContainer 
           position="top-center"
           autoClose={5000}
         />
-        <GoalComponent />
       </div>
     </Router>
   );

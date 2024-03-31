@@ -26,7 +26,7 @@ function Task(props) {
   const handleClose = () => {
     setGoalInput(prev => ({
       ...prev,
-      taskArr: [ {
+      taskArr: [ ...prev.taskArr, {
         ...task,
         id: uuidv4(),
         isCompleted: false,
@@ -39,7 +39,6 @@ function Task(props) {
   const [selectedDateTime, setSelectedDateTime] = useState(new Date());
 
   const handleSelect = (date) => {
-      console.log('the val is', date)
       setTask((prev) => ({
         ...prev,
         reminders: [...prev.reminders, date]

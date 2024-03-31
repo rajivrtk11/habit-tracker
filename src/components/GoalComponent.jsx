@@ -4,6 +4,7 @@ import 'react-date-range/dist/styles.css'; // main css file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import Task from './Task';
 import { db, auth, storage } from "../firebase";
+import { toast } from 'react-toastify';
 import {
   getDocs,
   collection,
@@ -12,23 +13,27 @@ import {
   updateDoc,
   doc,
 } from "firebase/firestore";
+import { useNavigate } from 'react-router-dom';
+
+const DEFAULT_GOAL = {
+    userId: "",
+    description: "",
+    startDate: new Date(),
+    endDate: new Date() ,
+    taskArr: [
+      
+    ] 
+}
 
 const GoalComponent = () => {
+    const navigate = useNavigate();
     const [selectedRange, setSelectedRange] = useState({
         startDate: new Date(),
         endDate: new Date(),
         key: 'selection',
     });
     const [show, setShow] = useState(false);
-    const [goalInput, setGoalInput] = useState({
-      userId: "",
-      description: "",
-      startDate: new Date(),
-      endDate: new Date() ,
-      taskArr: [
-        
-      ] 
-    })
+    const [goalInput, setGoalInput] = useState(DEFAULT_GOAL)
 
     const handleDateSelect = (ranges) => {
         setGoalInput(prev => ({
@@ -54,22 +59,36 @@ const GoalComponent = () => {
       };
 
     const handleSubmit = async(event) => {
-        event.preventDefault(); // Prevent default form submission behavior
-        console.log('inside submit', auth);
-    
-        debugger
+        event.preventDefault(); 
+
         try {
             const res = await addDoc(goalsCollectionRef, {
-              ...goalInput
+              ...goalInput,
+              userId: auth?.currentUser?.uid,
             });
-            console.log('the res', res);
+            toast.success('Goal added successfully!!', {
+                position: "top-center",
+                autoClose: 5000,
+            });
+            setGoalInput(DEFAULT_GOAL);
+            navigate("/");
+
           } catch (err) {
+            toast.error('Error occured while adding goal. Please try again.', {
+                position: "top-center",
+                autoClose: 5000,
+            });
             console.error(err);
           }
     }
     
     const handleChange = (e) => {
-        setGoalInput(e?.target?.name, e?.target?.value);
+        const key = e?.target?.name;
+
+        setGoalInput(prev => ({
+            ...prev,
+            [key]: e?.target?.value,
+        }));
     }
 
     useEffect(() => {
@@ -102,9 +121,11 @@ const GoalComponent = () => {
                     />
                 </div>
             </div>
-            <button type="submit" className="btn btn-primary">Submit</button>
+            <button type="button" className="btn btn-primary mb-5" onClick={() => setShow(true)}>Add Task</button>
+            <div className='row w-50 mx-auto'>
+                 <button type="submit" className="btn btn-primary">Submit</button>
+            </div>
         </form>
-        <button className="btn btn-primary" onClick={() => setShow(true)}>Add Task</button>
         {
             show && <Task show={show} setShow={setShow} setGoalInput={setGoalInput}/>
             
